@@ -1,14 +1,19 @@
-= Istio Tutorial Pipelines
+= Istio and Knative Tutorial Pipelines 
 
-The https://tekton.dev[Tekton Pipelines] that can be used to deploy the https://bit.ly/istio-tutorial[Istio Tutorial] applications to OpenShift/Kubernetes
+The https://tekton.dev[Tekton Pipelines] that can be used to deploy:
+
+*  https://bit.ly/istio-tutorial[Istio Tutorial] applications to OpenShift/Kubernetes
+*  https://bit.ly/knative-tutorial[Knative Tutorial] applications to OpenShift/Kubernetes**(WIP)**
 
 == Pre-req
 
-An OpenShift4 cluster with 
+An OpenShift4 cluster with following components:
 
-- Isito 
-- Knative Serving - if you want to deploy the applications in serverless way 
-- Tekton Pipelines
+- Istio - To play with servicemesh functionalities
+- Knative Serving - To play with severless functionalities 
+- https://github.com/openshift/pipelines-tutorial#install-openshift-pipelines[Install Tekton Pipelines]
+- https://github.com/tektoncd/cli/releases/latest[Tekton CLI]
+
 
 == Create Tutorial Project in OpenShift
 
@@ -101,13 +106,55 @@ oc create -f recommendation/pipeline-deploy.yaml && \
 oc create -f recommendation/pipeline-run.yaml
 ----
 
+Watch the logs of pipeline run using the command 
+
+[source,bash]
+----
+# get the running pipeline id 
+tkn pipelinerun ls
+# get logs of the pipeline via
+tkn pipelinerun logs -a -f <id-from-previous-command>
+----
+
 === Version 2
 
 [source,bash]
 ----
 oc create -f recommendation/deployment-v2.yaml && \
-oc create -f recommendation/pipeline-deploy.yaml && \
 oc create -f recommendation/pipeline-run-v2.yaml
 ----
 
+Watch the logs of pipeline run using the command 
 
+[source,bash]
+----
+# get the running pipeline id 
+tkn pipelinerun ls
+# get logs of the pipeline via
+tkn pipelinerun logs -a -f <id-from-previous-command>
+----
+
+== Cleanup
+
+* Delete all pipeline runs 
+[source,bash]
+----
+tkn pipelinerun ls | awk 'NR>1{print $1}' | xargs oc delete pipelinerun 
+----
+
+* Delete all pipelines
+[source,bash]
+----
+oc delete -f recommendation/pipeline-deploy.yaml && \
+   -f preference/pipeline-deploy.yaml && \
+   -f customer/pipeline-deploy.yaml 
+----
+
+* Delete applications
+[source,bash]
+----
+oc delete -f recommendation/deployment-v1.yaml && \
+  -f recommendation/deployment-v2.yaml && \
+  -f preference/app.yaml && \
+  -f customer/app.yaml 
+----

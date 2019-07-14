@@ -8,6 +8,9 @@ spec:
     type: git
   - name: app-image
     type: image
+  params:
+    - name: deploymentConfig
+      description: The DeploymentConfig name to rollout
   tasks:
   - name: build
     taskRef:
@@ -35,4 +38,4 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest recommendation"
+      value: "rollout latest ${params.deploymentConfig}"
