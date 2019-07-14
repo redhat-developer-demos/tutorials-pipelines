@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 @Path("/")
 public class RecommendationResource {
 
-    private static final String RESPONSE_STRING_FORMAT = "recommendation v1 from '%s': %d\n";
+    private static final String RESPONSE_STRING_FORMAT = "recommendation v2 from '%s': %d\n";
 
     private static final String RESPONSE_STRING_NOW_FORMAT = "recommendation v3 %s from '%s': %d\n";
 
