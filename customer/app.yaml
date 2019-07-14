@@ -1,0 +1,101 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: customer
+  name: customer
+spec:
+  replicas: 1
+  selector:
+    app: customer
+    version: v1
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      containerNames:
+      - customer
+      from:
+        kind: ImageStreamTag
+        name: customer:latest
+    type: ImageChange
+  strategy:
+    type: Rolling 
+  template:
+    metadata:
+      labels:
+        app: customer
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - env:
+        - name: JAEGER_SERVICE_NAME
+          value: customer
+        - name: JAEGER_ENDPOINT
+          value: http://jaeger-collector.istio-system.svc:14268/api/traces
+        - name: JAEGER_PROPAGATION
+          value: b3
+        - name: JAEGER_SAMPLER_TYPE
+          value: const
+        - name: JAEGER_SAMPLER_PARAM
+          value: "1"
+        name: customer
+        image: customer:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health 
+            port: 8080          
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health 
+            port: 8080           
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 5
+        resources:
+          requests: 
+            memory: "20Mi" 
+            cpu: "50m"
+          limits:
+            memory: "40Mi"
+            cpu: "100m" 
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer
+  labels:
+    app: customer    
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: customer
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: customer
+  labels:
+    app: customer
+spec:
+  to:
+    kind: Service
+    name: customer
+    weight: 100
+  port:
+    targetPort: http

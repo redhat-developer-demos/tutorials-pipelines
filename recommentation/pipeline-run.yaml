@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: recommendation-deploy-pipelinerun-
+spec:
+  pipelineRef:
+    name: deploy-openshift-pipeline
+  trigger:
+    type: manual
+  serviceAccount: 'pipeline'
+  resources:
+  - name: app-git
+    resourceRef:
+      name: korea-keynote-demo-git
+  - name: app-image
+    resourceRef:
+      name: recommendation-openshift-image-v1

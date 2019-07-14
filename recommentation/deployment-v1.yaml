@@ -1,0 +1,62 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: recommendation
+  name: recommendation-v1
+spec:
+  replicas: 1
+  selector:
+    app: recommendation
+    version: v1
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      containerNames:
+      - recommendation
+      from:
+        kind: ImageStreamTag
+        name: recommendation:v1
+    type: ImageChange
+  strategy:
+    type: Rolling 
+  template:
+    metadata:
+      labels:
+        app: recommendation
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - name: recommendation
+        image: recommendation:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health 
+            port: 8080          
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health 
+            port: 8080           
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          timeoutSeconds: 5
+        resources:
+          requests: 
+            memory: "20Mi" 
+            cpu: "50m"
+          limits:
+            memory: "40Mi"
+            cpu: "100m" 
+        securityContext:
+          privileged: false

@@ -1,0 +1,70 @@
+= Istio Tutorial Pipelines
+
+The https://tekton.dev[Tekton Pipelines] that can be used to deploy the https://bit.ly/istio-tutorial[Istio Tutorial] applications to OpenShift/Kubernetes
+
+== Pre-req
+
+An OpenShift4 cluster with 
+
+- Isito 
+- Knative Serving - if you want to deploy the applications in serverless way 
+- Tekton Pipelines
+
+== Create Tutorial Project in OpenShift
+
+[source,bash]
+----
+oc new-project tutorial && \
+oc create serviceaccount pipeline && \
+oc adm policy add-scc-to-user privileged -z pipeline && \
+oc adm policy add-role-to-user edit -z pipeline
+----
+
+== Deploy Nexus
+
+To make maven builds faster, we will deploy Sonatype Nexus
+
+[source,bash]
+----
+oc new-app sonatype/nexus && \
+oc expose svc/nexus
+----
+
+== Tasks
+
+Create the following Tekton tasks which will be used in the `Pipelines`
+
+[source,bash]
+----
+oc create -f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml && \
+oc create -f https://raw.githubusercontent.com/openshift/pipelines-catalog/master/s2i-java-8/s2i-java-8-task.yaml && \
+oc create -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/s2i-quarkus-task.yaml
+----
+
+== Application Deployment
+
+== Common
+
+[source,bash]
+----
+----
+
+== Customer
+
+[source,bash]
+----
+----
+
+== Preference
+
+[source,bash]
+----
+----
+
+== Recommendation
+
+[source,bash]
+----
+----
+
+

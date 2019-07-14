@@ -1,0 +1,85 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: customer
+  name: customer
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: preference
+  name: preference
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: recommendation
+  name: recommendation
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: korea-keynote-demo-git
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/kameshsampath/korea-keynote-demo
+  - name: revision
+    value: master
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: korea-keynote-demo-git-v2
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/kameshsampath/korea-keynote-demo
+  - name: revision
+    value: v2
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: customer-openshift-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: "image-registry.openshift-image-registry.svc:5000/myproject/customer"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: preference-openshift-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: "image-registry.openshift-image-registry.svc:5000/myproject/preference"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: recommendation-openshift-image-v1
+spec:
+  type: image
+  params:
+  - name: url
+    value: "image-registry.openshift-image-registry.svc:5000/myproject/preference:v1"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: recommendation-openshift-image-v2
+spec:
+  type: image
+  params:
+  - name: url
+    value: "image-registry.openshift-image-registry.svc:5000/myproject/preference:v2"
