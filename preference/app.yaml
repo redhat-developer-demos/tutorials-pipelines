@@ -17,7 +17,7 @@ spec:
       - preference
       from:
         kind: ImageStreamTag
-        name: preference:latest
+        name: preference:v1
     type: ImageChange
   strategy:
     type: Rolling 
@@ -42,7 +42,7 @@ spec:
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
         name: preference
-        image: preference:latest
+        image: preference:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -85,17 +85,3 @@ spec:
     targetPort: 8080
   selector:
     app: preference
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: preference
-  labels:
-    app: preference
-spec:
-  to:
-    kind: Service
-    name: preference
-    weight: 100
-  port:
-    targetPort: http

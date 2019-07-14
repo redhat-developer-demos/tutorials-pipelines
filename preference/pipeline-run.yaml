@@ -4,7 +4,7 @@ metadata:
   generateName: preference-deploy-pipelinerun-
 spec:
   pipelineRef:
-    name: deploy-openshift-pipeline
+    name: pref-deploy-openshift-pipeline
   trigger:
     type: manual
   serviceAccount: 'pipeline'

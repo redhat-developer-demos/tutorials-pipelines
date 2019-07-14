@@ -4,14 +4,14 @@ metadata:
   generateName: recommendation-deploy-pipelinerun-
 spec:
   pipelineRef:
-    name: deploy-openshift-pipeline
+    name: recom-deploy-openshift-pipeline
   trigger:
     type: manual
   serviceAccount: 'pipeline'
   resources:
   - name: app-git
     resourceRef:
-      name: korea-keynote-demo-git
+      name: korea-keynote-demo-git-v2
   - name: app-image
     resourceRef:
-      name: recommendation-openshift-image-v1
+      name: recommendation-openshift-image-v2

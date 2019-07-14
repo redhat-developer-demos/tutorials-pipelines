@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: recommendation
-        image: recommendation:latest
+        image: recommendation:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -60,3 +60,17 @@ spec:
             cpu: "100m" 
         securityContext:
           privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation
+  labels:
+    app: recommendation    
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: recommendation

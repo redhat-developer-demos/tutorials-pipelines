@@ -17,7 +17,7 @@ spec:
       - customer
       from:
         kind: ImageStreamTag
-        name: customer:latest
+        name: customer:v1
     type: ImageChange
   strategy:
     type: Rolling 
@@ -42,7 +42,7 @@ spec:
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
         name: customer
-        image: customer:latest
+        image: customer:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

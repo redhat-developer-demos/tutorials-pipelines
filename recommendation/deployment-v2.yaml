@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: recommendation
-        image: recommendation:latest
+        image: recommendation:v2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

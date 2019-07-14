@@ -17,7 +17,9 @@ An OpenShift4 cluster with
 oc new-project tutorial && \
 oc create serviceaccount pipeline && \
 oc adm policy add-scc-to-user privileged -z pipeline && \
-oc adm policy add-role-to-user edit -z pipeline
+oc adm policy add-role-to-user edit -z pipeline && \
+oc adm policy add-scc-to-user privileged -z default && \
+oc adm policy add-scc-to-user anyuid -z default
 ----
 
 == Deploy Nexus
@@ -47,24 +49,65 @@ oc create -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-
 
 [source,bash]
 ----
+oc create -f pipelines-common/resources.yaml
 ----
 
 == Customer
 
 [source,bash]
 ----
+oc create -f customer/app.yaml && \
+oc create -f customer/pipeline-deploy.yaml && \
+oc create -f customer/pipeline-run.yaml
+----
+
+Watch the logs of pipeline run using the command 
+[source,bash]
+----
+# get the running pipeline id 
+tkn pipelinerun ls
+# get logs of the pipeline via
+tkn pipelinerun logs -a -f <id-from-previous-command>
 ----
 
 == Preference
 
 [source,bash]
 ----
+oc create -f preference/app.yaml && \
+oc create -f preference/pipeline-deploy.yaml && \
+oc create -f preference/pipeline-run.yaml
 ----
 
-== Recommendation
+Watch the logs of pipeline run using the command 
 
 [source,bash]
 ----
+# get the running pipeline id 
+tkn pipelinerun ls
+# get logs of the pipeline via
+tkn pipelinerun logs -a -f <id-from-previous-command>
+----
+
+
+== Recommendation
+
+=== Version 1
+
+[source,bash]
+----
+oc create -f recommendation/deployment-v1.yaml && \
+oc create -f recommendation/pipeline-deploy.yaml && \
+oc create -f recommendation/pipeline-run.yaml
+----
+
+=== Version 2
+
+[source,bash]
+----
+oc create -f recommendation/deployment-v2.yaml && \
+oc create -f recommendation/pipeline-deploy.yaml && \
+oc create -f recommendation/pipeline-run-v2.yaml
 ----
 
 
