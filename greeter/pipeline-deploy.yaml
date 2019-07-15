@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: rhd-tutorial-deploy
+  name: rhd-tutorial-greeter-deploy
 spec:
   resources:
   - name: app-git
@@ -9,14 +9,13 @@ spec:
   - name: app-image
     type: image
   params:
-    - name: deploymentConfig
-      description: The application name i.e. OpenShift/Kubernetes Deployment name
+    - name: serviceName
+      description: The name of the Knative service
     - name: applicationSrcDir
       description: The source directory of the application within the source repository
   tasks:
   - name: build
     taskRef:
-      #name: s2i-quarkus
       name: quarkus-native
     params:
       - name: TLSVERIFY
@@ -36,9 +35,13 @@ spec:
         resource: app-image
   - name: deploy
     taskRef:
-      name: openshift-client
+      name: kn-create-service
     runAfter:
       - build
     params:
-    - name: ARGS
-      value: "rollout latest ${params.deploymentConfig}"
+    - name: name
+      value: "${inputs.params.serviceName}"
+    resources:
+      inputs:
+      - name: image
+        resource: app-image

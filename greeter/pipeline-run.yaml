@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: greeter-deploy-pipelinerun-
+spec:
+  pipelineRef:
+    name: rhd-tutorial-greeter-deploy
+  params:
+    - name: serviceName
+      value: greeter
+    - name: applicationSrcDir
+      value: greeter
+  trigger:
+    type: manual
+  serviceAccount: 'pipeline'
+  resources:
+  - name: app-git
+    resourceRef:
+      name: korea-keynote-demo-git
+  - name: app-image
+    resourceRef:
+      name: greeter-image
