@@ -33,8 +33,7 @@ To make maven builds faster, we will deploy Sonatype Nexus
 
 [source,bash]
 ----
-oc new-app sonatype/nexus && \
-oc expose svc/nexus
+oc new-app sonatype/nexus
 ----
 
 == Tasks
@@ -50,11 +49,20 @@ oc create -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-
 
 == Application Deployment
 
+== Download the sources
+
+[source,bash]
+----
+git clone https://github.com/redhat-developer-demos/tutorials-pipelines
+cd tutorials-pipelines
+----
+
 == Common
 
 [source,bash]
 ----
-oc create -f pipelines-common/resources.yaml
+oc create -f pipelines-common/resources.yaml && \
+oc create -f customer/pipeline-deploy.yaml
 ----
 
 == Customer
@@ -62,7 +70,6 @@ oc create -f pipelines-common/resources.yaml
 [source,bash]
 ----
 oc create -f customer/app.yaml && \
-oc create -f customer/pipeline-deploy.yaml && \
 oc create -f customer/pipeline-run.yaml
 ----
 
@@ -80,7 +87,6 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 [source,bash]
 ----
 oc create -f preference/app.yaml && \
-oc create -f preference/pipeline-deploy.yaml && \
 oc create -f preference/pipeline-run.yaml
 ----
 
@@ -101,8 +107,7 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/deployment-v1.yaml && \
-oc create -f recommendation/pipeline-deploy.yaml && \
+oc create -f recommendation/app-v1.yaml && \
 oc create -f recommendation/pipeline-run.yaml
 ----
 
@@ -120,7 +125,7 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/deployment-v2.yaml && \
+oc create -f recommendation/app-v2.yaml && \
 oc create -f recommendation/pipeline-run-v2.yaml
 ----
 
