@@ -4,7 +4,12 @@ metadata:
   generateName: customer-deploy-pipelinerun-
 spec:
   pipelineRef:
-    name: cust-deploy-openshift-pipeline
+    name: rhd-tutorial-deploy
+  params:
+    - name: deploymentConfig
+      value: customer
+    - name: applicationSrcDir
+      value: customer
   trigger:
     type: manual
   serviceAccount: 'pipeline'

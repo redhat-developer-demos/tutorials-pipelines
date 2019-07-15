@@ -4,10 +4,12 @@ metadata:
   generateName: recommendation-deploy-pipelinerun-
 spec:
   pipelineRef:
-    name: recom-deploy-openshift-pipeline
+    name: rhd-tutorial-deploy
   params:
     - name: "deploymentConfig"
       value: "recommendation-v2"
+    - name: "applicationSrcDir"
+      value: "recommendation"
   trigger:
     type: manual
   serviceAccount: 'pipeline'

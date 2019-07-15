@@ -4,7 +4,12 @@ metadata:
   generateName: preference-deploy-pipelinerun-
 spec:
   pipelineRef:
-    name: pref-deploy-openshift-pipeline
+    name: rhd-tutorial-deploy
+  params:
+    - name: "deploymentConfig"
+      value: "preference"
+    - name: "applicationSrcDir" 
+      value: "preference"
   trigger:
     type: manual
   serviceAccount: 'pipeline'
