@@ -33,7 +33,7 @@ public class GreeterResource {
 
   @GET
   @Produces(MediaType.TEXT_PLAIN)
-  @Path("/healthz")
+  @Path("/health")
   public String health() {
     return "OK";
   }

@@ -45,3 +45,4 @@ spec:
       inputs:
       - name: image
         resource: app-image
+        from: [build]
