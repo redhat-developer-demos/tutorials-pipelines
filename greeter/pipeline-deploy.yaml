@@ -39,10 +39,10 @@ spec:
     runAfter:
       - build
     params:
-    - name: name
-      value: "${inputs.params.serviceName}"
+      - name: name
+        value: ${params.serviceName}
     resources:
       inputs:
-      - name: image
+      - name : image
         resource: app-image
-        from: [build]
+      

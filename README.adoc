@@ -61,16 +61,16 @@ cd tutorials-pipelines
 
 [source,bash]
 ----
-oc create -f pipelines-common/resources.yaml && \
-oc create -f customer/pipeline-deploy.yaml
+oc create -f pipelines-common/resources.yaml \
+  -f pipelines-common/pipeline-deploy.yaml
 ----
 
 == Customer
 
 [source,bash]
 ----
-oc create -f customer/app.yaml && \
-oc create -f customer/pipeline-run.yaml
+oc create -f customer/app.yaml \
+  -f customer/pipeline-run.yaml
 ----
 
 Watch the logs of pipeline run using the command 
@@ -86,8 +86,8 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f preference/app.yaml && \
-oc create -f preference/pipeline-run.yaml
+oc create -f preference/app.yaml \
+   -f preference/pipeline-run.yaml
 ----
 
 Watch the logs of pipeline run using the command 
@@ -107,8 +107,8 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/app-v1.yaml && \
-oc create -f recommendation/pipeline-run.yaml
+oc create -f recommendation/app-v1.yaml \
+  -f recommendation/pipeline-run.yaml
 ----
 
 Watch the logs of pipeline run using the command 
@@ -125,8 +125,8 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/app-v2.yaml && \
-oc create -f recommendation/pipeline-run-v2.yaml
+oc create -f recommendation/app-v2.yaml \
+  -f recommendation/pipeline-run-v2.yaml
 ----
 
 Watch the logs of pipeline run using the command 
@@ -150,16 +150,14 @@ tkn pipelinerun ls | awk 'NR>1{print $1}' | xargs oc delete pipelinerun
 * Delete all pipelines
 [source,bash]
 ----
-oc delete -f recommendation/pipeline-deploy.yaml && \
-   -f preference/pipeline-deploy.yaml && \
-   -f customer/pipeline-deploy.yaml 
+oc delete -f pipelines-commons/pipeline-deploy.yaml
 ----
 
 * Delete applications
 [source,bash]
 ----
-oc delete -f recommendation/deployment-v1.yaml && \
-  -f recommendation/deployment-v2.yaml && \
-  -f preference/app.yaml && \
+oc delete -f recommendation/app-v1.yaml \
+  -f recommendation/app-v2.yaml \
+  -f preference/app.yaml \
   -f customer/app.yaml 
 ----
