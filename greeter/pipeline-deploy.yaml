@@ -18,13 +18,13 @@ spec:
     taskRef:
       name: quarkus-native
     params:
-      - name: TLSVERIFY
+      - name: tlsVerify
         value: "false"
-      - name: PATH_CONTEXT
+      - name: contextDir
         value: "${params.applicationSrcDir}"
       # if you have different repository manager update the value below
       # if don't wish to use nexus or repo manager then comment the name/value below
-      - name: MAVEN_MIRROR_URL
+      - name: mavenMirrorUrl
         value: 'http://nexus:8081/nexus/content/groups/public'
     resources:
       inputs:
