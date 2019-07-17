@@ -25,6 +25,8 @@ oc adm policy add-scc-to-user privileged -z pipeline && \
 oc adm policy add-role-to-user edit -z pipeline && \
 oc adm policy add-scc-to-user privileged -z default && \
 oc adm policy add-scc-to-user anyuid -z default
+oc create -f pipeline-sa-roles.yaml -n tutorial && \
+oc policy add-role-to-user pipeline-roles -z pipeline --role-namespace=tutorial
 ----
 
 == Deploy Nexus
@@ -42,9 +44,10 @@ Create the following Tekton tasks which will be used in the `Pipelines`
 
 [source,bash]
 ----
-oc create -f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml && \
-oc create -f https://raw.githubusercontent.com/openshift/pipelines-catalog/master/s2i-java-8/s2i-java-8-task.yaml && \
-oc create -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/s2i-quarkus-task.yaml
+oc create -f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml \
+  -f https://raw.githubusercontent.com/openshift/pipelines-catalog/master/s2i-java-8/s2i-java-8-task.yaml \
+  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/s2i-quarkus-task.yaml \
+  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/knative-client/kn-service-create-task.yaml
 ----
 
 == Application Deployment
@@ -127,6 +130,24 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 ----
 oc create -f recommendation/app-v2.yaml \
   -f recommendation/pipeline-run-v2.yaml
+----
+
+Watch the logs of pipeline run using the command 
+
+[source,bash]
+----
+# get the running pipeline id 
+tkn pipelinerun ls
+# get logs of the pipeline via
+tkn pipelinerun logs -a -f <id-from-previous-command>
+----
+
+=== Knative 
+
+[source,bash]
+----
+oc create -f greeter/pipeline-deploy.yaml \
+  -f greeter/pipeline-run.yaml
 ----
 
 Watch the logs of pipeline run using the command 
