@@ -1,15 +1,15 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  generateName: customer-pipeline-
+  generateName: recommendation-ksvc-pipeline-
 spec:
   pipelineRef:
-    name: rhd-tutorial-deploy
+    name: rhd-tutorial-kn-deploy
   params:
-    - name: deploymentConfig
-      value: customer
+    - name: serviceName
+      value: recommendation
     - name: applicationSrcDir
-      value: customer
+      value: recommendation
   trigger:
     type: manual
   serviceAccount: 'pipeline'
@@ -19,4 +19,4 @@ spec:
       name: korea-keynote-demo-git
   - name: app-image
     resourceRef:
-      name: customer-openshift-image
+      name: recommendation-openshift-image-v2
