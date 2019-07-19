@@ -16,7 +16,6 @@ spec:
   tasks:
   - name: build
     taskRef:
-      #name: s2i-quarkus
       name: quarkus-native
     params:
       - name: tlsVerify

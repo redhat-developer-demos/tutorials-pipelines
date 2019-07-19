@@ -1,10 +1,10 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  generateName: greeter-deploy-pipelinerun-
+  generateName: greeter-ksvc-pipeline-
 spec:
   pipelineRef:
-    name: rhd-tutorial-greeter-deploy
+    name: rhd-tutorial-kn-deploy
   params:
     - name: serviceName
       value: greeter

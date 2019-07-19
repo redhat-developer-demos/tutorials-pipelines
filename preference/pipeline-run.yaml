@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  generateName: preference-deploy-pipelinerun-
+  generateName: preference-pipeline-
 spec:
   pipelineRef:
     name: rhd-tutorial-deploy
