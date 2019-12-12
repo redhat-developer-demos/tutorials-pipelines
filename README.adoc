@@ -20,16 +20,17 @@ An OpenShift4 cluster with following components:
 [source,bash]
 ----
 oc new-project tutorial && \
-oc create serviceaccount pipeline && \
+! oc create serviceaccount pipeline && \
 oc adm policy add-scc-to-user privileged -z pipeline && \
 oc adm policy add-role-to-user edit -z pipeline && \
 oc adm policy add-scc-to-user privileged -z default && \
 oc adm policy add-scc-to-user anyuid -z default && \
-oc create -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/knative-client/pipeline-sa-roles.yaml -n tutorial && \
+oc create -f https://raw.githubusercontent.com/redhat-developer-demos/tutorials-pipelines/pipelines-common/pipeline-role-sa.yaml
+ -n tutorial && \
 oc policy add-role-to-user pipeline-roles -z pipeline --role-namespace=tutorial
 ----
 
-== Deploy Nexus
+== Deploy Nexus(Optional)
 
 To make maven builds faster, we will deploy Sonatype Nexus
 
@@ -44,11 +45,15 @@ Create the following Tekton tasks which will be used in the `Pipelines`
 
 [source,bash]
 ----
-oc create -f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml \
-  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/s2i-quarkus-task.yaml \
-  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/quarkus-native-task.yaml \
-  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/quarkus/quarkus-jvm-task.yaml \
-  -f https://raw.githubusercontent.com/redhat-developer-demos/pipelines-catalog/master/knative-client/kn-service-create-task.yaml
+oc create -n tutorial \
+  -f https://raw.githubusercontent.com/tektoncd/catalog/master/kn/kn.yaml
+
+oc create -n tutorial \
+-f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml
+
+oc create -n tutorial \
+  -f https://raw.githubusercontent.com/redhat-developer-demos/knative-tutorial/master/06-pipelines/build-app-task.yaml
+
 ----
 
 Check the tasks created
@@ -60,11 +65,10 @@ tkn task ls
 
 ```
 NAME                AGE
-kn-create-service   12 seconds ago
-openshift-client    13 seconds ago
-quarkus-jvm         12 seconds ago
-quarkus-native      12 seconds ago
-s2i-quarkus         13 seconds ago
+NAME               AGE
+build-app          3 seconds ago
+kn                 5 seconds ago
+openshift-client   4 seconds ago
 ```
 
 == Application Deployment
@@ -93,8 +97,17 @@ oc create -f pipelines-common/resources.yaml \
 
 [source,bash]
 ----
+# create customer deployment config 
 oc create -f customer/app.yaml
-oc create -f customer/pipeline-run.yaml
+
+# start the customer deploy pipeline 
+tkn pipeline start rhd-tutorial-deploy \
+ --param="applicationSrcDir=customer" \
+ --param="deploymentConfig=customer" \
+ --param="mavenMirrorUrl=http://nexus:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source" \
+ --resource="app-image=customer-openshift-image" \
+ --serviceaccount='pipeline' 
 ----
 
 Watch the logs of pipeline run using the command 
@@ -110,8 +123,17 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f preference/app.yaml \
-   -f preference/pipeline-run.yaml
+# create preference deployment config 
+oc create -f preference/app.yaml
+
+# start preference deployment pipeline
+tkn pipeline start rhd-tutorial-deploy \
+ --param="applicationSrcDir=preference" \
+ --param="deploymentConfig=preference" \
+ --param="mavenMirrorUrl=http://nexus:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source" \
+ --resource="app-image=preference-openshift-image" \
+ --serviceaccount='pipeline' 
 ----
 
 Watch the logs of pipeline run using the command 
@@ -133,15 +155,27 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/app-v1.yaml \
-  -f recommendation/pipeline-run.yaml
+oc create -f recommendation/app-v1.yaml
+
+tkn pipeline start rhd-tutorial-deploy \
+ --param="applicationSrcDir=recommendation" \
+ --param="deploymentConfig=recommendation" \
+ --param="mavenMirrorUrl=http://nexus:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source" \
+ --resource="app-image=recommendation-openshift-image-v1" \
+ --serviceaccount='pipeline' 
 ----
 
 ==== Knative Service Deployment
 
 [source,bash]
 ----
-oc create -f recommendation/kn-pipeline-run.yaml
+tkn pipeline start rhd-tutorial-kn-deploy \
+ --param="applicationSrcDir=recommendation" \
+ --param="mavenMirrorUrl=http://nexus:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source" \
+ --resource="app-image=recommendation-openshift-image-v1" \
+ --serviceaccount='pipeline' 
 ----
 
 Watch the logs of pipeline run using the command 
@@ -160,15 +194,27 @@ tkn pipelinerun logs -a -f <id-from-previous-command>
 
 [source,bash]
 ----
-oc create -f recommendation/app-v2.yaml \
-  -f recommendation/pipeline-run-v2.yaml
+oc create -f recommendation/app-v2.yaml 
+
+tkn pipeline start rhd-tutorial-deploy \
+ --param="applicationSrcDir=recommendation" \
+ --param="deploymentConfig=recommendation" \
+ --param="mavenMirrorUrl=http://nexus:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source-v2" \
+ --resource="app-image=recommendation-openshift-image-v2" \
+ --serviceaccount='pipeline' 
 ----
 
 ==== Knative Service Deployment
 
 [source,bash]
 ----
-oc create -f recommendation/kn-pipeline-v2-run.yaml
+tkn pipeline start rhd-tutorial-kn-deploy \
+ --param="applicationSrcDir=recommendation" \
+ --param="mavenMirrorUrl=http://nexus.rhd-workshop-infra:8081/nexus/content/groups/public" \
+ --resource="app-git=git-source-v2" \
+ --resource="app-image=recommendation-openshift-image-v2" \
+ --serviceaccount='pipeline' 
 ----
 
 Watch the logs of pipeline run using the command 

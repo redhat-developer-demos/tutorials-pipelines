@@ -4,40 +4,43 @@ metadata:
   name: rhd-tutorial-deploy
 spec:
   resources:
-  - name: app-git
-    type: git
-  - name: app-image
-    type: image
+    - name: app-git
+      type: git
+    - name: app-image
+      type: image
   params:
     - name: deploymentConfig
       description: The application name i.e. OpenShift/Kubernetes Deployment name
     - name: applicationSrcDir
       description: The source directory of the application within the source repository
   tasks:
-  - name: build
-    taskRef:
-      name: quarkus-native
-    params:
-      - name: tlsVerify
-        value: "false"
-      - name: contextDir
-        value: "${params.applicationSrcDir}"
-      # if you have different repository manager update the value below
-      # if don't wish to use nexus or repo manager then comment the name/value below
-      - name: mavenMirrorUrl
-        value: 'http://nexus:8081/nexus/content/groups/public'
-    resources:
-      inputs:
-      - name: source
-        resource: app-git
-      outputs:
-      - name: image
-        resource: app-image
-  - name: deploy
-    taskRef:
-      name: openshift-client
-    runAfter:
-      - build
-    params:
-    - name: ARGS
-      value: "rollout latest ${params.deploymentConfig}"
+    - name: build
+      taskRef:
+        name: build-app
+      params:
+        - name: contextDir
+          value: "$(params.applicationSrcDir)"
+        # if you have different repository manager update the value below
+        # if don't wish to use nexus or repo manager then comment the name/value below
+        - name: mavenMirrorUrl
+          value: "http://nexus.rhd-workshop-infra:8081/nexus/content/groups/public"
+        - name: dockerFile
+          value: "Dockerfile"
+      resources:
+        inputs:
+          - name: source
+            resource: app-git
+        outputs:
+          - name: builtImage
+            resource: app-image
+    - name: deploy
+      taskRef:
+        name: openshift-client
+      runAfter:
+        - build
+      params:
+        - name: ARGS
+          value:
+            - "rollout"
+            - "latest"
+            - "$(params.deploymentConfig)"

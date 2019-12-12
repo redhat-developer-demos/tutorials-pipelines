@@ -16,31 +16,36 @@ spec:
   tasks:
     - name: build
       taskRef:
-        name: quarkus-native
+        name: build-app
       params:
-        - name: tlsVerify
-          value: "false"
         - name: contextDir
-          value: "${params.applicationSrcDir}"
+          value: "$(params.applicationSrcDir)"
         # if you have different repository manager update the value below
         # if don't wish to use nexus or repo manager then comment the name/value below
         - name: mavenMirrorUrl
           value: "http://nexus.rhd-workshop-infra:8081/nexus/content/groups/public"
+        - name: dockerFile
+          value: "Dockerfile"
       resources:
         inputs:
           - name: source
             resource: app-git
         outputs:
-          - name: image
+          - name: builtImage
             resource: app-image
     - name: deploy
       taskRef:
-        name: kn-create-service
+        name: kn
       runAfter:
         - build
       params:
-        - name: name
-          value: ${params.serviceName}
+        - name: ARGS
+          value:
+            - "service"
+            - "create"
+            - "recommendation"
+            - "--force"
+            - "--image=$(inputs.resources.image.url)"
       resources:
         inputs:
           - name: image

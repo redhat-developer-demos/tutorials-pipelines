@@ -10,13 +10,11 @@ spec:
       value: customer
     - name: applicationSrcDir
       value: customer
-  trigger:
-    type: manual
-  serviceAccount: 'pipeline'
+  serviceAccount: "pipeline"
   resources:
-  - name: app-git
-    resourceRef:
-      name: korea-keynote-demo-git
-  - name: app-image
-    resourceRef:
-      name: customer-openshift-image
+    - name: app-git
+      resourceRef:
+        name: korea-keynote-demo-git
+    - name: app-image
+      resourceRef:
+        name: customer-openshift-image
