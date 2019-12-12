@@ -23,26 +23,26 @@ metadata:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: korea-keynote-demo-git
+  name: git-source
 spec:
   type: git
   params:
-  - name: url
-    value: https://github.com/redhat-developer-demos/tutorial-pipelines
-  - name: revision
-    value: v1
+    - name: url
+      value: https://github.com/redhat-developer-demos/tutorials-pipelines
+    - name: revision
+      value: v1
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: korea-keynote-demo-git-v2
+  name: git-source-v2
 spec:
   type: git
   params:
-  - name: url
-    value: https://github.com/redhat-developer-demos/tutorial-pipelines
-  - name: revision
-    value: v2
+    - name: url
+      value: https://github.com/redhat-developer-demos/tutorials-pipelines
+    - name: revision
+      value: v2
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -51,8 +51,8 @@ metadata:
 spec:
   type: image
   params:
-  - name: url
-    value: "image-registry.openshift-image-registry.svc:5000/tutorial/customer:v1"
+    - name: url
+      value: "image-registry.openshift-image-registry.svc:5000/tutorial/customer:v1"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -61,8 +61,8 @@ metadata:
 spec:
   type: image
   params:
-  - name: url
-    value: "image-registry.openshift-image-registry.svc:5000/tutorial/preference:v1"
+    - name: url
+      value: "image-registry.openshift-image-registry.svc:5000/tutorial/preference:v1"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -71,8 +71,8 @@ metadata:
 spec:
   type: image
   params:
-  - name: url
-    value: "image-registry.openshift-image-registry.svc:5000/tutorial/recommendation:v1"
+    - name: url
+      value: "image-registry.openshift-image-registry.svc:5000/tutorial/recommendation:v1"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -81,8 +81,8 @@ metadata:
 spec:
   type: image
   params:
-  - name: url
-    value: "image-registry.openshift-image-registry.svc:5000/tutorial/recommendation:v2"
+    - name: url
+      value: "image-registry.openshift-image-registry.svc:5000/tutorial/recommendation:v2"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -91,5 +91,5 @@ metadata:
 spec:
   type: image
   params:
-  - name: url
-    value: "image-registry.openshift-image-registry.svc:5000/tutorial/greeter:v1"
+    - name: url
+      value: "image-registry.openshift-image-registry.svc:5000/tutorial/greeter:v1"
